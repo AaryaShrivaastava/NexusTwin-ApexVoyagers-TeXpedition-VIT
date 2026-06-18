@@ -5,27 +5,12 @@
 ▲ Next.js 16.2.9 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.29.182:3000
-✓ Ready in 335ms
+✓ Ready in 266ms
 ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
  We detected multiple lockfiles and selected the directory of /Users/aaryashrivaastava/package-lock.json as the root directory.
  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
  Detected additional lockfiles: 
-   * /Users/aaryashrivaastava/Desktop/Hackathon prototype/nexustwin/frontend/package-lock.json
+   * /Users/aaryashrivaastava/Desktop/Hackathon prototype/frontend/package-lock.json
 
 
- GET / 200 in 1756ms (next.js: 1617ms, application-code: 138ms)
- GET / 200 in 38ms (next.js: 8ms, application-code: 30ms)
- GET /dashboard 200 in 205ms (next.js: 192ms, application-code: 13ms)
- GET /architecture 200 in 193ms (next.js: 183ms, application-code: 10ms)
- GET /simulator 200 in 244ms (next.js: 234ms, application-code: 11ms)
- GET /council 200 in 231ms (next.js: 220ms, application-code: 11ms)
- GET /timeline 200 in 177ms (next.js: 167ms, application-code: 9ms)
- GET /architecture 200 in 10ms (next.js: 2ms, application-code: 8ms)
- GET /timeline 200 in 59ms (next.js: 20ms, application-code: 39ms)
- GET / 200 in 13ms (next.js: 3ms, application-code: 10ms)
- GET /dashboard 200 in 17ms (next.js: 4ms, application-code: 13ms)
- GET /reality-twin 200 in 250ms (next.js: 236ms, application-code: 14ms)
- GET /simulator 200 in 18ms (next.js: 3ms, application-code: 15ms)
- GET /council 200 in 22ms (next.js: 4ms, application-code: 18ms)
- GET /timeline 200 in 18ms (next.js: 1800µs, application-code: 16ms)
