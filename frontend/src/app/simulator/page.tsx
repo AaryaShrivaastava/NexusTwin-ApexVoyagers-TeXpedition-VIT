@@ -33,7 +33,8 @@ export default function SimulatorPage() {
       setActiveSimulation(simulation);
       
       if (simulation.scenarios && simulation.scenarios.length > 0) {
-         const sorted = [...simulation.scenarios].sort((a, b) => b.confidence_score - a.confidence_score);
+         // Sort by projected_revenue instead of confidence_score so the most profitable scenario wins
+         const sorted = [...simulation.scenarios].sort((a, b) => b.projected_revenue - a.projected_revenue);
          const processedScenarios = simulation.scenarios.map(s => ({
             ...s,
             winner: s.id === sorted[0].id
