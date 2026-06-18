@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRealityStore } from "@/store/store";
 
+import { generateSimulation } from "@/lib/api";
+
 const mockScenarios = [
   { name: "Scenario A: Send WhatsApp", projected_revenue: 120, conversion_rate: 15, retention_impact: 5, confidence_score: 85 },
   { name: "Scenario B: Send Email", projected_revenue: 80, conversion_rate: 8, retention_impact: 2, confidence_score: 92, winner: true },
@@ -16,16 +18,37 @@ const mockScenarios = [
 ];
 
 export default function SimulatorPage() {
-  const { activeCustomer } = useRealityStore();
+  const { activeCustomer, setActiveSimulation } = useRealityStore();
   const [isSimulating, setIsSimulating] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [query, setQuery] = useState("");
+  const [scenarios, setScenarios] = useState<any[]>(mockScenarios);
 
-  const handleSimulate = () => {
+  const handleSimulate = async () => {
+    if (!query) return;
     setIsSimulating(true);
-    setTimeout(() => {
+    
+    try {
+      const simulation = await generateSimulation(activeCustomer?.id || "mock-id", query);
+      setActiveSimulation(simulation);
+      
+      if (simulation.scenarios && simulation.scenarios.length > 0) {
+         const sorted = [...simulation.scenarios].sort((a, b) => b.confidence_score - a.confidence_score);
+         const processedScenarios = simulation.scenarios.map(s => ({
+            ...s,
+            winner: s.id === sorted[0].id
+         }));
+         setScenarios(processedScenarios);
+      } else {
+         setScenarios(mockScenarios);
+      }
+    } catch (e) {
+      console.error(e);
+      setScenarios(mockScenarios);
+    } finally {
       setIsSimulating(false);
       setShowResults(true);
-    }, 2500);
+    }
   };
 
   return (
@@ -50,6 +73,8 @@ export default function SimulatorPage() {
               </h2>
               <div className="flex flex-col gap-4">
                 <Input 
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   placeholder="What should we do for this customer to maximize retention and brand value?" 
                   className="bg-white/5 border-white/10 h-14 text-lg focus-visible:ring-indigo-500 text-white placeholder:text-zinc-600"
                 />
@@ -78,7 +103,7 @@ export default function SimulatorPage() {
           className="space-y-12"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockScenarios.map((scenario, idx) => (
+            {scenarios.map((scenario, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
