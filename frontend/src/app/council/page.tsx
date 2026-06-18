@@ -7,6 +7,8 @@ import { Shield, TrendingUp, Heart, Megaphone, CheckCircle2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { runCouncil } from "@/lib/api";
+
 const AGENT_ICONS: Record<string, React.ReactNode> = {
   "Growth Agent": <TrendingUp className="w-5 h-5 text-green-400" />,
   "Finance Agent": <Shield className="w-5 h-5 text-red-400" />,
@@ -32,12 +34,40 @@ const mockDebate = [
 ];
 
 export default function AgentCouncilPage() {
-  const { activeSimulation } = useRealityStore();
-  const debate = activeSimulation?.agent_decisions?.length ? activeSimulation.agent_decisions : mockDebate;
-  
+  const { activeSimulation, setActiveSimulation } = useRealityStore();
+  const [debate, setDebate] = useState<any[]>(activeSimulation?.agent_decisions?.length ? activeSimulation.agent_decisions : []);
   const [visibleMessages, setVisibleMessages] = useState<number>(0);
-  
+  const [isDebating, setIsDebating] = useState<boolean>(true);
+
   useEffect(() => {
+    async function executeCouncil() {
+      if (debate.length > 0) {
+        setIsDebating(false);
+        return; // Already have debate
+      }
+      if (!activeSimulation?.id) {
+        setDebate(mockDebate);
+        setIsDebating(false);
+        return;
+      }
+      
+      try {
+        const updatedSim = await runCouncil(activeSimulation.id);
+        setActiveSimulation(updatedSim);
+        setDebate(updatedSim.agent_decisions || mockDebate);
+      } catch (error) {
+        console.error("Council API error:", error);
+        setDebate(mockDebate);
+      } finally {
+        setIsDebating(false);
+      }
+    }
+    executeCouncil();
+  }, [activeSimulation?.id]);
+
+  useEffect(() => {
+    if (isDebating || debate.length === 0) return;
+    
     // Simulate real-time sequential rendering
     const timer = setInterval(() => {
       setVisibleMessages(prev => {
@@ -47,7 +77,7 @@ export default function AgentCouncilPage() {
       });
     }, 2000); // 2 seconds per agent
     return () => clearInterval(timer);
-  }, [debate.length]);
+  }, [debate.length, isDebating]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] p-8 max-w-4xl mx-auto flex flex-col">
